@@ -3,7 +3,10 @@ import time
 
 
 class ClientError(Exception):
-    print(f"Error: {Exception.args}")
+    def __init__(self, text):
+        self.text = text
+        if text:
+            print(f"Error: '{self.text}'")
     pass
 
 
@@ -16,7 +19,7 @@ class Client:
     @staticmethod
     def check_response_status(response):
         if response[0:3] != 'ok\n':
-            raise ClientError(response)
+            raise ClientError(str(response))
 
     @staticmethod
     def check_timestamp(timestamp):
@@ -31,17 +34,17 @@ class Client:
             data = line.split(' ')
 
             if len(data) != 3:
-                raise ClientError()
+                raise ClientError('Len != 3')
 
             try:
                 float(data[1])
                 int(data[2])
             except ValueError:
-                raise ClientError()
+                raise ClientError('Value error ')
 
-    def connection(self, data):
+    def connection(self, request):
         with socket.create_connection((self._address, self._port), self._timeout) as sock:
-            sock.sendall(data.encode("utf8"))
+            sock.sendall(request.encode("utf8"))
             response = sock.recv(1024).decode('utf-8')
             self.check_response_status(response)
             return response
