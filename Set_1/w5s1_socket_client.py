@@ -74,3 +74,4 @@ class Client:
         timestamp = self.check_timestamp(timestamp) if timestamp else int(time.time())
         put_command = f"put {key} {val} {timestamp}\n"
         self.connection(put_command)
+
